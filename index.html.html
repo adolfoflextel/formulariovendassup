@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA - Formulário de Registro</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+        }
+
+        /* Estilos do menu lateral */
+        .menu {
+            width: 200px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+        }
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #444;
+            border-radius: 5px;
+        }
+        .menu a:hover {
+            background: #555;
+        }
+
+        /* Estilos do conteúdo */
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <h2>Menu</h2>
+        <a href="#registro" onclick="navigate('registro')">Registro</a>
+        <a href="#outra_pagina" onclick="navigate('outra_pagina')">Outra Página</a>
+        <a href="#autorizacao" onclick="navigate('FORMULÁRIO_AUTORIZACAO')">Formulário de Autorização</a>
+    </div>
+
+    <div class="content" id="app">
+        <!-- O conteúdo dinâmico será carregado aqui -->
+    </div>
+
+    <script>
+        // Função para navegação SPA
+        function navigate(page) {
+            let content = document.getElementById('app');
+            
+            if (page === 'registro') {
+                content.innerHTML = `
+                    <h2>Formulário de Registro</h2>
+                    <form>
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" name="nome" required><br><br>
+                        
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required><br><br>
+                        
+                        <label for="senha">Senha:</label>
+                        <input type="password" id="senha" name="senha" required><br><br>
+                        
+                        <button type="submit">Registrar</button>
+                    </form>
+                `;
+            } else {
+                fetch(page + '.html') // Busca a página externa
+                    .then(response => response.text())
+                    .then(html => {
+                        content.innerHTML = html; // Insere o conteúdo na div "app"
+                    })
+                    .catch(error => {
+                        content.innerHTML = `<p>Erro ao carregar a página.</p>`;
+                    });
+            }
+        }
+        
+        // Carregar página inicial
+        navigate('registro');
+    </script>
+</body>
+</html>
