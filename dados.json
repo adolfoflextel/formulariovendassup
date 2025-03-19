@@ -419,7 +419,7 @@
 
 
 
-"67 internet":[{ "transmissor": "ZTE_NASSER_WIFI", "vlan": 3023, "f601": 13, "f670": 23, "f6600": 23, "huaweiBridge": "NÃO PERMITIDO", "huaweiRoteada": "NÃO PERMITIDO" },
+"67internet":[{ "transmissor": "ZTE_NASSER_WIFI", "vlan": 3023, "f601": 13, "f670": 23, "f6600": 23, "huaweiBridge": "NÃO PERMITIDO", "huaweiRoteada": "NÃO PERMITIDO" },
   { "transmissor": "ZTE_CAIÇARA_67", "vlan": 4013, "f601": 13, "f670": 14, "f6600": 14, "huaweiBridge": "NÃO PERMITIDO", "huaweiRoteada": "NÃO PERMITIDO" },
   { "transmissor": "ZTE_TIJUCA_FLEXTEL", "vlan": 3023, "f601": 13, "f670": 23, "f6600": 23, "huaweiBridge": "NÃO PERMITIDO", "huaweiRoteada": "NÃO PERMITIDO" },
   { "transmissor": "ZTE_STA_EMILIA_FLEXTEL", "vlan": 3023, "f601": 13, "f670": 23, "f6600": 23, "huaweiBridge": "NÃO PERMITIDO", "huaweiRoteada": "NÃO PERMITIDO" },
