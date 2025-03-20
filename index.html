@@ -211,13 +211,24 @@ input[type=text], select {
         }
 
         // Função para filtrar os dados por filial
-        function filtrarPorFilial(filial) {
+       function filtrarPorFilial(filial) {
+    // Verifica se os dados já foram carregados, se não, carrega antes de filtrar
+    if (Object.keys(dados).length === 0) {
+        carregarDados().then(() => {
             if (dados[filial]) {
                 exibirDados(dados[filial]);
             } else {
                 document.getElementById("resultado").innerHTML = "<tr><td colspan='7'>Nenhum dado encontrado</td></tr>";
             }
+        });
+    } else {
+        if (dados[filial]) {
+            exibirDados(dados[filial]);
+        } else {
+            document.getElementById("resultado").innerHTML = "<tr><td colspan='7'>Nenhum dado encontrado</td></tr>";
         }
+    }
+}
 
         // Função para filtrar por palavra-chave na barra de pesquisa
         function filtrarConteudo() {
@@ -267,14 +278,17 @@ input[type=text], select {
             }
         }
 
-        window.onload = function() {
-            var today = new Date();
-            var day = ("0" + today.getDate()).slice(-2);
-            var month = ("0" + (today.getMonth() + 1)).slice(-2);
-            var year = today.getFullYear();
-            var formattedDate = year + "-" + month + "-" + day;
-            document.getElementById("data").value = formattedDate;
-        };
+       window.onload = function() {
+    var today = new Date();
+    var day = ("0" + today.getDate()).slice(-2);
+    var month = ("0" + (today.getMonth() + 1)).slice(-2);
+    var year = today.getFullYear();
+    var formattedDate = year + "-" + month + "-" + day;
+    document.getElementById("data").value = formattedDate;
+
+    // Garante que a aba correta seja exibida ao carregar a página
+    showPage('registroAtendimento'); 
+};
 
         function toggleMenu() {
             let menu = document.getElementById('menu');
