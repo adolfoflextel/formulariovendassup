@@ -142,41 +142,7 @@
       document.getElementById("metragem-cabo").style.display =
         tipo === "CABO DE REDE" ? "block" : "none";
     }
-
-
-async function enviarParaPlanilha(dados) {
-        try {
-            await fetch('https://script.google.com/macros/s/AKfycbzZyLwxjeaNntvygQsLlRgbMhzylcOvoYAxrbqQz87sybtzc6VhsIWZufNDwQTrhcks/exec, {
-                method: 'POST',
-                body: JSON.stringify(dados),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-        } catch (error) {
-            console.error('Erro ao enviar para a planilha:', error);
-        }
-    }
-
-    document.querySelector("form").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const dados = {
-            vendedor: document.getElementById("vendedor").value,
-            cliente: document.getElementById("cliente").value,
-            filial: document.getElementById("filial").value,
-            tipoVenda: document.getElementById("tipo-venda").value,
-            metragem: document.getElementById("metragem").value || "",
-            protocolo: document.getElementById("protocolo").value,
-        };
-
-        enviarParaPlanilha(dados);
-
-        // aqui você pode manter a geração da prévia e do .txt se desejar
-    });
-
-
-    
+   
     document.getElementById("venda-form").addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -227,6 +193,9 @@ Assinatura Digital: ${hash}
       link.download = `venda_${cliente.replace(/\s+/g, "_")}_${Date.now()}.somenteleitura.txt`;
       link.click();
     });
+
+
+    
   </script>
 </body>
 </html>
