@@ -183,6 +183,29 @@ Data/Hora: ${dataHora}
 Assinatura Digital: ${hash}
 `;
 
+// Enviar para Google Sheets
+fetch('https://script.google.com/macros/s/AKfycbzZyLwxjeaNntvygQsLlRgbMhzylcOvoYAxrbqQz87sybtzc6VhsIWZufNDwQTrhcks/exec', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    vendedor,
+    cliente,
+    filial,
+    tipoVenda,
+    metragem,
+    protocolo
+  })
+})
+.then(response => response.text())
+.then(result => {
+  console.log("Dados enviados:", result);
+})
+.catch(error => {
+  console.error("Erro ao enviar para planilha:", error);
+});
+      
       // Mostrar prévia
       document.getElementById("preview").innerText = finalText;
 
