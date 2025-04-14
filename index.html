@@ -1,326 +1,198 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPA com Menu Retrátil</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { display: flex; background: #f4f4f4; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
-        .menu { position: fixed; left: -250px; width: 250px; height: 100vh; background: #333; color: white; padding: 20px; transition: left 0.3s ease-in-out; }
-        .menu.mostrar { left: 0; }
-        .menu button { background: none; border: none; color: white; cursor: pointer; font-size: 18px; margin-bottom: 10px; }
-        .menu ul { list-style: none; padding: 20px 0; }
-        .menu ul li { padding: 10px; cursor: pointer; transition: background 0.3s; }
-        .menu ul li:hover { background: #555; }
-        .menu-toggle { position: fixed; top: 10px; left: 10px; background: #007bff; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; z-index: 1100; }
-        .content { flex-grow: 1; padding: 20px; margin-left: 0; transition: margin-left 0.3s ease-in-out; width: 100%; }
-        .menu.mostrar + .content { margin-left: 250px; }
-        .content.menu-ativo { margin-left: 250px; }
-        .hidden { display: none; }
-        form { display: flex; flex-direction: column; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 60%; margin: auto; }
-        label { font-size: 16px; color: #333; margin-bottom: 5px; }
-        input, select, textarea { padding: 12px; border: 1px solid #ccc; border-radius: 6px; width: 100%; margin-bottom: 15px; }
-        button { padding: 12px 18px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; transition: background 0.3s; }
-        button:hover { background: #0056b3; }
-        textarea { height: 150px; margin-bottom: 20px; }
-        h2 { margin-top: 20px; margin-left: 55px; transition: margin-left 0.3s ease-in-out; font-size: 24px; }
-        .menu.mostrar + .content h2 { margin-left: 300px; }
-        .form-actions { display: flex; justify-content: space-between; margin-top: 20px; }
-        .form-actions button { width: 30%; }
-        @media (max-width: 768px) {
-            form { width: 90%; }
-            .menu { width: 200px; }
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Vendas</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
 
-input[type=text], select {
-  width: 100%;
-  padding: 10px 10px;
-  margin: 5px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
+    .container {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      align-items: center;
+    }
 
-    </style>
+    h1 {
+      color: #333;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 800px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #metragem-cabo {
+      display: none;
+    }
+
+    #preview {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
 </head>
 <body>
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-    <div class="menu" id="menu">
-        <ul>
-            <li onclick="showPage('registroAtendimento')">Registro de Atendimento</li>
-            <li onclick="showPage('posAtendimento')">Pós Atendimento</li>
-            <li onclick="showPage('relacaoolt')">RELAÇÃO OLT</li>
-            <li onclick="showPage('aba4')">Aba 4</li>
-        </ul>
-    </div>
-    <div class="content">
-        <div id="registroAtendimento">
-            <h2>Registro de Atendimento</h2>
-            <form id="registroForm">
-                <label>Serviço:</label>
-                <select required>
-                    <option value="Instalação">Instalação</option>
-                    <option value="Mudança de Endereço">Mudança de Endereço</option>
-                    <option value="Troca de Equipamento">Troca de Equipamento</option>
-                    <option value="Troca de ONU">Troca de ONU</option>
-                </select>
+  <div class="container">
+    <h1>Registro de Vendas</h1>
+    <div class="form-container">
+      <form id="venda-form">
+        <label for="vendedor">Vendedor:</label>
+        <select id="vendedor" name="vendedor" required>
+          <option value="">Selecione</option>
+          <option value="ALEXANDRA FERREIRA">ALEXANDRA FERREIRA</option>
+          <option value="ALINE SANCHES">ALINE SANCHES</option>
+          <option value="BRUNO DUARTE">BRUNO DUARTE</option>
+          <option value="DOUGLAS MACIEL">DOUGLAS MACIEL</option>
+          <option value="EDSON CLAUDIO">EDSON CLAUDIO</option>
+          <option value="JESSICA FERREIRA">JESSICA FERREIRA</option>
+          <option value="JOÃO CASTRO">JOÃO CASTRO</option>
+          <option value="LUIS NANTES">LUIS NANTES</option>
+        </select>
 
-                <label>Agente:</label>
-                <input type="text" required>
+        <label for="cliente">Nome do Cliente:</label>
+        <input type="text" id="cliente" name="cliente" required>
 
-                <label>Data:</label>
-                <input type="date" id="data" name="data" readonly>
+        <label for="filial">Filial:</label>
+        <select id="filial" name="filial" required>
+          <option value="">Selecione</option>
+          <option value="FLEXTEL">FLEXTEL</option>
+          <option value="CONNECT">CONNECT</option>
+          <option value="WI-FI NET ">WI-FI NET </option>
+          <option value="JP/67 (CG/ROC/COR)">JP/67 (CG/ROC/COR)</option>
+        </select>
 
-                <label>Login Roteador:</label>
-                <input type="text" id="loginRoteador" name="loginRoteador" value="SEGUE DESCRIÇÃO LOGIN" readonly>
+        <label for="tipo-venda">Tipo de Venda:</label>
+        <select id="tipo-venda" name="tipo-venda" required onchange="mostrarMetragem()">
+          <option value="">Selecione</option>
+          <option value="SEGUNDO PONTO 2G - R$50,00">SEGUNDO PONTO 2G - R$50,00</option>
+          <option value="SEGUNDO PONTO 2G - R$30,00">SEGUNDO PONTO 2G - R$30,00</option>
+          <option value="SEGUNDO PONTO 5G - R$100,00">SEGUNDO PONTO 5G - R$100,00</option>
+          <option value="SEGUNDO PONTO 5G - R$80,00">SEGUNDO PONTO 5G - R$80,00</option>
+          <option value="SEGUNDO PONTO 2G - CNPJ - R$80,00">SEGUNDO PONTO 2G - CNPJ - R$80,00</option>
+          <option value="SEGUNDO PONTO 2G - CNPJ - R$60,00">SEGUNDO PONTO 2G - CNPJ - R$60,00</option>
+          <option value="SEGUNDO PONTO 5G - CNPJ - R$130,00">SEGUNDO PONTO 5G - CNPJ - R$130,00</option>
+          <option value="SEGUNDO PONTO 5G - CNPJ - R$110,00">SEGUNDO PONTO 5G - CNPJ - R$110,00</option>
+          <option value="CABO DE REDE">CABO DE REDE</option>
+        </select>
 
-                <label>Senha do Roteador:</label>
-                <input type="text" id="senhaRoteador" name="senhaRoteador" value="SEGUE DESCRIÇÃO SENHA" readonly>
-
-                <label>ONU:</label>
-                <input type="text" id="onu" name="onu">
-
-                <label>PON:</label>
-                <input type="text" id="pon" name="pon">
-
-                <label>CTO:</label>
-                <input type="text" id="cto" name="cto">
-
-                <label>Porta:</label>
-                <input type="text" id="porta" name="porta">
-
-                <label>Equipe Técnica:</label>
-                <input type="text" id="equipeTecnica" name="equipeTecnica">
-
-                <label>Sinal da CTO:</label>
-                <input type="text" id="sinalCto" name="sinalCto">
-
-                <label>Sinal ONU:</label>
-                <input type="text" id="sinalOnu" name="sinalOnu">
-
-                <label>Protocolo:</label>
-                <input type="text" id="protocolo" name="protocolo">
-
-                <div class="form-actions">
-                    <button type="button" id="gerarTexto">Gerar Texto</button>
-                    <button type="button" id="copiarTexto">Copiar</button>
-                    <button type="button" id="limparCampos">Limpar Campos</button>
-                </div>
-            </form>
+        <div id="metragem-cabo">
+          <label for="metragem">Metragem do Cabo (em metros):</label>
+          <input type="number" id="metragem" name="metragem" min="1" placeholder="Ex: 20">
         </div>
-        <div id="posAtendimento" class="hidden">
-		
-            <h2>Pós Atendimento</h2>
-            <form>
-                <label for="posAtendimentoSelect">Selecione o tipo de Pós Atendimento:</label>
-                <select id="posAtendimentoSelect" onchange="mostrarFormulario()">
-                    <option value="">-- Selecione --</option>
-                    <option value="formSucesso">PÓS ATENDIMENTO: COM SUCESSO</option>
-                    <option value="formRecusa">PÓS ATENDIMENTO: CLIENTE SE RECUSOU A RESPONDER</option>
-                    <option value="formSemSucesso">PÓS ATENDIMENTO: CONTATO SEM SUCESSO</option>
-                </select>
 
-                <div id="formSucesso" class="formulario" style="display:none;">
-                    <h3>PÓS ATENDIMENTO: COM SUCESSO</h3>
-                    <label>Agente:</label><input type="text"><br>
-                    <label>Protocolo da Ligação:</label><input type="text"><br>
-                    <label>Nome de Quem Atendeu Técnico:</label><input type="text"><br>
-                    <label>Nota:</label><input type="number" value="10"><br>
-                </div>
+        <label for="protocolo">Protocolo:</label>
+        <input type="text" id="protocolo" name="protocolo" required>
 
-                <div id="formRecusa" class="formulario" style="display:none;">
-                    <h3>PÓS ATENDIMENTO: CLIENTE SE RECUSOU A RESPONDER</h3>
-                    <label>Agente:</label><input type="text"><br>
-                    <label>Protocolo:</label><input type="text"><br>
-                </div>
-
-                <div id="formSemSucesso" class="formulario" style="display:none;">
-                    <h3>PÓS ATENDIMENTO: CONTATO SEM SUCESSO</h3>
-                    <label>Agente:</label><input type="text"><br>
-                    <label>Protocolo da Ligação:</label><input type="text"><br>
-                </div>
-            </form>
-        </div>
-<div id="relacaoolt">
-        <h1>Relação OLT's VLAN</h1>
-        <input type="text" id="searchBar" placeholder="Pesquise por palavra-chave..." oninput="filtrarConteudo()">
-        <div>
-            <button onclick="filtrarPorFilial('flextel')">Flextel</button>
-            <button onclick="filtrarPorFilial('wifi')">WiFi</button>
-            <button onclick="filtrarPorFilial('connect')">Connect</button>
-            <button onclick="filtrarPorFilial('67internet')">67 Internet</button>
-            <button onclick="filtrarPorFilial('jpnet')">JPNet</button>
-            <button onclick="carregarDados()">Mostrar Tudo</button>
-        </div>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Transmissor</th>
-                    <th>VLAN</th>
-                    <th>F601</th>
-                    <th>F670</th>
-                    <th>F6600</th>
-                    <th>Huawei Bridge</th>
-                    <th>Huawei Roteada</th>
-                </tr>
-            </thead>
-            <tbody id="resultado"></tbody>
-        </table>
+        <button type="submit">Registrar Venda</button>
+      </form>
     </div>
 
+    <div id="preview"></div>
+  </div>
 
-
-
-	</div>
-    
-
-
-    <script>
-	 let dados = {}; // Variável para armazenar os dados carregados
-
-        // Função para carregar os dados do JSON externo
-        function carregarDados() {
-            fetch('dados.json')  // Carrega o JSON externo
-                .then(response => response.json())
-                .then(json => {
-                    dados = json;  // Armazena os dados carregados
-                    exibirDados(Object.values(dados).flat()); // Mostra todos os dados na tabela
-                })
-                .catch(error => console.error("Erro ao carregar os dados:", error));
-        }
-
-        // Função para exibir os dados na tabela
-        function exibirDados(lista) {
-            const tabela = document.getElementById("resultado");
-            tabela.innerHTML = ""; // Limpa os dados antes de inserir novos
-
-            lista.forEach(item => {
-                const linha = `<tr>
-                    <td>${item.transmissor}</td>
-                    <td>${item.vlan}</td>
-                    <td>${item.f601}</td>
-                    <td>${item.f670}</td>
-                    <td>${item.f6600}</td>
-                    <td>${item.huaweiBridge}</td>
-                    <td>${item.huaweiRoteada}</td>
-                </tr>`;
-                tabela.innerHTML += linha;
-            });
-        }
-
-        // Função para filtrar os dados por filial
-       function filtrarPorFilial(filial) {
-    // Verifica se os dados já foram carregados, se não, carrega antes de filtrar
-    if (Object.keys(dados).length === 0) {
-        carregarDados().then(() => {
-            if (dados[filial]) {
-                exibirDados(dados[filial]);
-            } else {
-                document.getElementById("resultado").innerHTML = "<tr><td colspan='7'>Nenhum dado encontrado</td></tr>";
-            }
-        });
-    } else {
-        if (dados[filial]) {
-            exibirDados(dados[filial]);
-        } else {
-            document.getElementById("resultado").innerHTML = "<tr><td colspan='7'>Nenhum dado encontrado</td></tr>";
-        }
+  <script>
+    function mostrarMetragem() {
+      const tipo = document.getElementById("tipo-venda").value;
+      document.getElementById("metragem-cabo").style.display =
+        tipo === "CABO DE REDE" ? "block" : "none";
     }
-}
 
-        // Função para filtrar por palavra-chave na barra de pesquisa
-        function filtrarConteudo() {
-            const termo = document.getElementById("searchBar").value.toLowerCase();
-            const todosDados = Object.values(dados).flat(); // Junta todas as filiais em uma única lista
-            const filtrados = todosDados.filter(item =>
-                item.transmissor.toLowerCase().includes(termo) ||
-                item.vlan.toString().includes(termo) ||
-                item.f601.toString().includes(termo) ||
-                item.f670.toString().includes(termo) ||
-                item.f6600.toString().includes(termo) ||
-                item.huaweiBridge.toLowerCase().includes(termo) ||
-                item.huaweiRoteada.toLowerCase().includes(termo)
-            );
+    document.getElementById("venda-form").addEventListener("submit", function (e) {
+      e.preventDefault();
 
-            exibirDados(filtrados);
-        }
+      const vendedor = document.getElementById("vendedor").value;
+      const cliente = document.getElementById("cliente").value;
+      const filial = document.getElementById("filial").value;
+      const tipoVenda = document.getElementById("tipo-venda").value;
+      const protocolo = document.getElementById("protocolo").value;
+      const dataHora = new Date().toLocaleString("pt-BR");
+      let valorTotal = "";
 
-        // Carrega os dados ao iniciar a página
-        window.onload = carregarDados;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-        function mostrarFormulario() {
-            console.log("Função chamada");
-            document.querySelectorAll('.formulario').forEach(el => {
-                el.style.display = 'none';
-            });
-            let selecionado = document.getElementById("posAtendimentoSelect").value;
-            console.log("Opção selecionada:", selecionado);
-            let formulario = document.getElementById(selecionado);
-            if (formulario) {
-                formulario.style.display = "block";
-                console.log("Exibindo formulário: ", selecionado);
-            } else {
-                console.log("Nenhum formulário encontrado para esta opção");
-            }
-        }
+      let metragem = "";
+      if (tipoVenda === "CABO DE REDE") {
+        metragem = parseInt(document.getElementById("metragem").value || 0);
+        valorTotal = (metragem * 4 + 20).toFixed(2); // R$4 por metro + R$20 crimpagem
+      } else {
+        valorTotal = tipoVenda.match(/R\$(\d+,?\d*)/)[1].replace(",", ".");
+      }
 
-       window.onload = function() {
-    var today = new Date();
-    var day = ("0" + today.getDate()).slice(-2);
-    var month = ("0" + (today.getMonth() + 1)).slice(-2);
-    var year = today.getFullYear();
-    var formattedDate = year + "-" + month + "-" + day;
-    document.getElementById("data").value = formattedDate;
+      const venda = `
+NÃO ALTERE ESTE DOCUMENTO - USO EXCLUSIVO PARA AUTENTICAÇÃO
+------------------------------------------------------------
+VENDA REGISTRADA
+--------------------------
+Vendedor: ${vendedor}
+Cliente: ${cliente}
+Filial: ${filial}
+Tipo de Venda: ${tipoVenda}
+${tipoVenda === "CABO DE REDE" ? `Metragem: ${metragem} metros\n` : ""}
+Protocolo: ${protocolo}
+Valor Total: R$ ${valorTotal}
+Data/Hora: ${dataHora}
+`;
 
-    // Garante que a aba correta seja exibida ao carregar a página
-    showPage('registroAtendimento'); 
-};
+      const hash = CryptoJS.MD5(venda).toString();
 
-        function toggleMenu() {
-            let menu = document.getElementById('menu');
-            let content = document.querySelector('.content');
-            menu.classList.toggle('mostrar');
-            content.classList.toggle('menu-ativo');
-        }
+      const finalText = `${venda}
+Assinatura Digital: ${hash}
+`;
 
-        function showPage(pageId) {
-            document.querySelectorAll('.content > div').forEach(div => div.classList.add('hidden'));
-            document.getElementById(pageId).classList.remove('hidden');
-        }
+      // Mostrar prévia
+      document.getElementById("preview").innerText = finalText;
 
-        document.getElementById('limparCampos').addEventListener('click', function() {
-            document.querySelector('form').reset();
-        });
-
-        document.getElementById('gerarTexto').addEventListener('click', function() {
-            let serviço = document.querySelector('select').value;
-            let agente = document.querySelector('input[name="agente"]').value;
-            let protocolo = document.querySelector('input[name="protocolo"]').value;
-
-            let textoGerado = `Serviço: ${serviço}\nAgente: ${agente}\nProtocolo: ${protocolo}`;
-            alert(textoGerado);
-        });
-
-        document.getElementById('copiarTexto').addEventListener('click', function() {
-            let texto = `Serviço: ${document.querySelector('select').value}\nAgente: ${document.querySelector('input[name="agente"]').value}\nProtocolo: ${document.querySelector('input[name="protocolo"]').value}`;
-            navigator.clipboard.writeText(texto).then(() => {
-                alert('Texto copiado para a área de transferência!');
-            });
-        });
-    </script>
+      // Baixar .txt
+      const blob = new Blob([finalText], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `venda_${cliente.replace(/\s+/g, "_")}_${Date.now()}.somenteleitura.txt`;
+      link.click();
+    });
+  </script>
 </body>
 </html>
