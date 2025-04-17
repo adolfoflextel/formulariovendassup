@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registro de Vendas</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -137,9 +137,10 @@
   </div>
 
   <script>
-    const supabaseUrl = 'https://roqswfkugwniudtcoyae.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvcXN3Zmt1Z3duaXVkdGNveWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MDc2OTQsImV4cCI6MjA2MDM4MzY5NH0.BW3lx1dr6yyGlB0P5acoPjKYU2p8HX6D9-xWNcLPupQ';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabase = window.supabase.createClient(
+      "https://roqswfkugwniudtcoyae.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvcXN3Zmt1Z3duaXVkdGNveWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MDc2OTQsImV4cCI6MjA2MDM4MzY5NH0.BW3lx1dr6yyGlB0P5acoPjKYU2p8HX6D9-xWNcLPupQ"
+    );
 
     function mostrarMetragem() {
       const tipo = document.getElementById("tipo-venda").value;
@@ -171,24 +172,6 @@
         valorTotal = match ? match[1].replace(",", ".") : "0.00";
       }
 
-      const { error } = await supabase.from('vendas').insert([
-        {
-          vendedor,
-          cliente,
-          filial,
-          tipo_venda: tipoVenda,
-          metragem,
-          protocolo,
-          valor_total: valorTotal,
-          data_hora: dataHora
-        }
-      ]);
-
-      if (error) {
-        alert("Erro ao registrar venda: " + error.message);
-        return;
-      }
-
       const venda = `
 NÃO ALTERE ESTE DOCUMENTO - USO EXCLUSIVO PARA AUTENTICAÇÃO
 ------------------------------------------------------------
@@ -198,20 +181,50 @@ Vendedor: ${vendedor}
 Cliente: ${cliente}
 Filial: ${filial}
 Tipo de Venda: ${tipoVenda}
-${tipoVenda === "CABO DE REDE" ? `Metragem: ${metragem} metros\n` : ""}Protocolo: ${protocolo}
+${tipoVenda === "CABO DE REDE" ? `Metragem: ${metragem} metros\n` : ""}
+Protocolo: ${protocolo}
 Valor Total: R$ ${valorTotal}
 Data/Hora: ${dataHora}
 `;
-      const hash = CryptoJS.MD5(venda).toString();
-      const finalText = `${venda}\nAssinatura Digital: ${hash}\n`;
 
+      const hash = CryptoJS.MD5(venda).toString();
+      const finalText = `${venda}
+Assinatura Digital: ${hash}
+`;
+
+      // Mostrar prévia
       document.getElementById("preview").innerText = finalText;
 
+      // Enviar para Supabase
+      const { data, error } = await supabase.from("vendas").insert([{
+        vendedor,
+        cliente,
+        filial,
+        tipo_venda: tipoVenda,
+        metragem: tipoVenda === "CABO DE REDE" ? metragem : null,
+        protocolo,
+        valor_total: parseFloat(valorTotal),
+        data_hora: new Date().toISOString(),
+        hash
+      }]);
+
+      if (error) {
+        console.error("Erro ao enviar para Supabase:", error);
+        alert("Erro ao registrar venda. Verifique o console.");
+        return;
+      }
+
+      alert("Venda registrada com sucesso!");
+
+      // Baixar .txt
       const blob = new Blob([finalText], { type: "text/plain" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `venda_${cliente.replace(/\s+/g, "_")}_${Date.now()}.somenteleitura.txt`;
       link.click();
+
+      document.getElementById("venda-form").reset();
+      mostrarMetragem();
     });
   </script>
 </body>
