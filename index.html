@@ -1,95 +1,200 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registro de Vendas</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 800px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #metragem-cabo {
+      display: none;
+    }
+
+    #preview {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
 </head>
 <body>
-  <h1>Registro de Vendas</h1>
+  <div class="container">
+    <h1>Registro de Vendas</h1>
+    <div class="form-container">
+      <form id="venda-form">
+        <label for="vendedor">Vendedor:</label>
+        <select id="vendedor" name="vendedor" required>
+          <option value="">Selecione</option>
+          <option value="ALEXANDRA FERREIRA">ALEXANDRA FERREIRA</option>
+          <option value="ALINE SANCHES">ALINE SANCHES</option>
+          <option value="BRUNO DUARTE">BRUNO DUARTE</option>
+          <option value="DOUGLAS MACIEL">DOUGLAS MACIEL</option>
+          <option value="EDSON CLAUDIO">EDSON CLAUDIO</option>
+          <option value="JESSICA FERREIRA">JESSICA FERREIRA</option>
+          <option value="JOÃO CASTRO">JOÃO CASTRO</option>
+          <option value="LUIS NANTES">LUIS NANTES</option>
+        </select>
 
-  <form id="vendaForm">
-    <label>Vendedor:
-      <input type="text" id="vendedor" required>
-    </label><br>
+        <label for="cliente">Nome do Cliente:</label>
+        <input type="text" id="cliente" name="cliente" required>
 
-    <label>Cliente:
-      <input type="text" id="cliente" required>
-    </label><br>
+        <label for="filial">Filial:</label>
+        <select id="filial" name="filial" required>
+          <option value="">Selecione</option>
+          <option value="FLEXTEL">FLEXTEL</option>
+          <option value="CONNECT">CONNECT</option>
+          <option value="WI-FI NET ">WI-FI NET </option>
+          <option value="JP/67 (CG/ROC/COR)">JP/67 (CG/ROC/COR)</option>
+        </select>
 
-    <label>Filial:
-      <select id="filial">
-        <option value="FLEXTEL">FLEXTEL</option>
-        <option value="WI-FI NET CONNECT">WI-FI NET CONNECT</option>
-        <option value="JP/67 (CG/ROC/COR)">JP/67 (CG/ROC/COR)</option>
-      </select>
-    </label><br>
+        <label for="tipo-venda">Tipo de Venda:</label>
+        <select id="tipo-venda" name="tipo-venda" required onchange="mostrarMetragem()">
+          <option value="">Selecione</option>
+          <option value="SEGUNDO PONTO 2G - R$50,00">SEGUNDO PONTO 2G - R$50,00</option>
+          <option value="SEGUNDO PONTO 2G - R$30,00">SEGUNDO PONTO 2G - R$30,00</option>
+          <option value="SEGUNDO PONTO 5G - R$100,00">SEGUNDO PONTO 5G - R$100,00</option>
+          <option value="SEGUNDO PONTO 5G - R$80,00">SEGUNDO PONTO 5G - R$80,00</option>
+          <option value="SEGUNDO PONTO 2G - CNPJ - R$80,00">SEGUNDO PONTO 2G - CNPJ - R$80,00</option>
+          <option value="SEGUNDO PONTO 2G - CNPJ - R$60,00">SEGUNDO PONTO 2G - CNPJ - R$60,00</option>
+          <option value="SEGUNDO PONTO 5G - CNPJ - R$130,00">SEGUNDO PONTO 5G - CNPJ - R$130,00</option>
+          <option value="SEGUNDO PONTO 5G - CNPJ - R$110,00">SEGUNDO PONTO 5G - CNPJ - R$110,00</option>
+          <option value="CABO DE REDE">CABO DE REDE</option>
+        </select>
 
-    <label>Tipo de Venda:
-      <select id="tipo_venda">
-        <option value="CABO DE REDE">CABO DE REDE</option>
-        <option value="SEGUNDO PONTO 2G - R$50,00">SEGUNDO PONTO 2G - R$50,00</option>
-        <option value="SEGUNDO PONTO 2G - R$30,00">SEGUNDO PONTO 2G - R$30,00</option>
-        <option value="SEGUNDO PONTO 5G - R$100,00">SEGUNDO PONTO 5G - R$100,00</option>
-        <option value="SEGUNDO PONTO 5G - R$80,00">SEGUNDO PONTO 5G - R$80,00</option>
-      </select>
-    </label><br>
+        <div id="metragem-cabo">
+          <label for="metragem">Metragem do Cabo (em metros):</label>
+          <input type="number" id="metragem" name="metragem" min="1" placeholder="Ex: 20">
+        </div>
 
-    <label>Metragem (caso venda de cabo):
-      <input type="number" id="metragem" value="0">
-    </label><br>
+        <label for="protocolo">Protocolo:</label>
+        <input type="text" id="protocolo" name="protocolo" required>
 
-    <label>Protocolo:
-      <input type="text" id="protocolo">
-    </label><br>
+        <button type="submit">Registrar Venda</button>
+      </form>
+    </div>
 
-    <button type="submit">Registrar</button>
-  </form>
+    <div id="preview"></div>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
-    const SUPABASE_URL = 'https://roqswfkugwniudtcoyae.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvcXN3Zmt1Z3duaXVkdGNveWFlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MDc2OTQsImV4cCI6MjA2MDM4MzY5NH0.BW3lx1dr6yyGlB0P5acoPjKYU2p8HX6D9-xWNcLPupQ';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    function mostrarMetragem() {
+      const tipo = document.getElementById("tipo-venda").value;
+      document.getElementById("metragem-cabo").style.display =
+        tipo === "CABO DE REDE" ? "block" : "none";
+    }
 
-    document.getElementById("vendaForm").addEventListener("submit", async function (e) {
+    document.getElementById("venda-form").addEventListener("submit", function (e) {
       e.preventDefault();
 
       const vendedor = document.getElementById("vendedor").value;
       const cliente = document.getElementById("cliente").value;
       const filial = document.getElementById("filial").value;
-      const tipo_venda = document.getElementById("tipo_venda").value;
-      const metragem = parseInt(document.getElementById("metragem").value) || 0;
+      const tipoVenda = document.getElementById("tipo-venda").value;
       const protocolo = document.getElementById("protocolo").value;
-      const data_hora = Date.now();
+      const dataHora = new Date().toLocaleString("pt-BR");
+      let valorTotal = "";
+      let metragem = "";
 
-      let valor_total = 0;
-      if (tipo_venda.includes("CABO DE REDE")) {
-        valor_total = (metragem * 4) + 20;
+      if (tipoVenda === "CABO DE REDE") {
+        metragem = parseInt(document.getElementById("metragem").value || 0);
+        if (metragem <= 0 || isNaN(metragem)) {
+          alert("Informe a metragem corretamente.");
+          return;
+        }
+        valorTotal = (metragem * 4 + 20).toFixed(2);
       } else {
-        valor_total = parseFloat(tipo_venda.split("R$")[1].replace(",", "."));
+        const match = tipoVenda.match(/R\$(\d+,?\d*)/);
+        valorTotal = match ? match[1].replace(",", ".") : "0.00";
       }
 
-      const has = btoa(`${vendedor}-${cliente}-${protocolo}-${data_hora}`);
+      const venda = `
+NÃO ALTERE ESTE DOCUMENTO - USO EXCLUSIVO PARA AUTENTICAÇÃO
+------------------------------------------------------------
+VENDA REGISTRADA
+--------------------------
+Vendedor: ${vendedor}
+Cliente: ${cliente}
+Filial: ${filial}
+Tipo de Venda: ${tipoVenda}
+${tipoVenda === "CABO DE REDE" ? `Metragem: ${metragem} metros\n` : ""}
+Protocolo: ${protocolo}
+Valor Total: R$ ${valorTotal}
+Data/Hora: ${dataHora}
+`;
 
-      const { data, error } = await supabase.from('vendas').insert([{
-        vendedor,
-        cliente,
-        filial,
-        tipo_venda,
-        metragem,
-        protocolo,
-        valor_total,
-        data_hora,
-        has
-      }]);
+      const hash = CryptoJS.MD5(venda).toString();
+      const finalText = `${venda}
+Assinatura Digital: ${hash}
+`;
 
-      if (error) {
-        console.error("Erro ao enviar para Supabase:", error);
-        alert("Erro ao registrar a venda.");
-      } else {
-        alert("Venda registrada com sucesso!");
-        document.getElementById("vendaForm").reset();
-      }
+      // Mostrar prévia
+      document.getElementById("preview").innerText = finalText;
+
+      // Baixar .txt
+      const blob = new Blob([finalText], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `venda_${cliente.replace(/\s+/g, "_")}_${Date.now()}.somenteleitura.txt`;
+      link.click();
     });
   </script>
 </body>
