@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pós Atendimento - SPA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #ffffff;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .dark-mode {
+      background-color: #333;
+      color: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    .dark-mode h1 {
+      color: #f4f4f4;
+    }
+    .menu {
+      margin: 20px 0;
+    }
+    .menu button {
+      display: block;
+      font-size: 18px;
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      width: 250px;
+      color: white;
+      text-align: center;
+    }
+    .menu button:nth-child(1) { background: #007bff; }
+    .menu button:nth-child(2) { background: #28a745; }
+    .menu button:nth-child(3) { background: #dc3545; }
+    .menu button:nth-child(4) { background: #ffc107; }
+    .menu button:nth-child(5) { background: #6f42c1; }
+
+    .toggle-button {
+      margin: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #222;
+      color: white;
+    }
+    .dark-mode .toggle-button {
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    #conteudo {
+      margin-top: 30px;
+      text-align: left;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      min-height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bem-vindo à TORRE</h1>
+  <p>Escolha uma opção abaixo:</p>
+  <button class="toggle-button" onclick="toggleDarkMode()" id="darkModeBtn">🌙</button>
+
+  <div class="menu">
+    <button onclick="carregarPagina('FORMULÁRIO_AUTORIZACAO.html')">Registro de Atendimento</button>
+    <button onclick="carregarPagina('REGISTRO_POS.html')">Pós Atendimento</button>
+    <button onclick="carregarPagina('relacaoolt.html')">RELAÇÃO OLT</button>
+    <button onclick="carregarPagina('agenda_marco.html')">AGENDA</button>
+    <button onclick="carregarPagina('novo_menu.html')">Novo Menu</button>
+  </div>
+
+  <div id="conteudo">
+    <p>O conteúdo será exibido aqui.</p>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      const isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", isDark);
+      document.getElementById("darkModeBtn").textContent = isDark ? "☀️" : "🌙";
+    }
+
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark-mode");
+      document.getElementById("darkModeBtn").textContent = "☀️";
+    }
+
+    async function carregarPagina(url) {
+      try {
+        const resposta = await fetch(url);
+        const html = await resposta.text();
+        document.getElementById("conteudo").innerHTML = html;
+      } catch (e) {
+        document.getElementById("conteudo").innerHTML = "<p>Erro ao carregar a página.</p>";
+      }
+    }
+  </script>
+</body>
+</html>
