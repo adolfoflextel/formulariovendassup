@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Links de Acesso</title>
+<style>
+body { font-family: Arial, sans-serif; transition: background-color 0.3s, color 0.3s; padding: 20px; }
+.light-mode { background: #f4f4f4; color: #333; }
+.dark-mode { background: #1e1e1e; color: #f1f1f1; }
+
+.container { max-width: 600px; margin: auto; padding: 20px; }
+h2 { margin-bottom: 15px; }
+input[type=text], input[type=file], select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; }
+.dark-mode input, .dark-mode select { background: #333; color: #f1f1f1; border: 1px solid #555; }
+
+ul { list-style: none; padding: 0; }
+li { margin: 10px 0; }
+a { display: block; padding: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; transition: background 0.3s; }
+a:hover { background: #0056b3; }
+.dark-mode a { background: #333; color: #f1f1f1; }
+.dark-mode a:hover { background: #555; }
+
+.theme-toggle { margin-bottom: 15px; padding: 8px 16px; border: none; background: #444; color: #fff; border-radius: 5px; cursor: pointer; }
+.light-mode .theme-toggle { background: #ddd; color: #333; }
+.light-mode .theme-toggle:hover { background: #ccc; }
+.dark-mode .theme-toggle:hover { background: #666; }
+</style>
+</head>
+<body class="light-mode">
+<div class="container">
+  <button class="theme-toggle" onclick="toggleTheme()">Alternar Tema</button>
+  <h2>Links de Acesso</h2>
+
+  <!-- Seleção de mês/ano -->
+  <label for="monthSelect">Selecionar Mês:</label>
+  <select id="monthSelect" onchange="loadMonth()"></select>
+
+  <!-- Upload de arquivo -->
+  <input type="file" id="fileInput" accept=".txt">
+
+  <!-- Pesquisa -->
+  <input type="text" id="search" onkeyup="filterLinks()" placeholder="Pesquisar links...">
+
+  <!-- Lista -->
+  <ul id="linksList"></ul>
+</div>
+
+<script>
+const ul = document.getElementById("linksList");
+const monthSelect = document.getElementById("monthSelect");
+
+// Gera lista de meses + anos (últimos 12 meses, por exemplo)
+function generateMonths() {
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    let date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let year = date.getFullYear();
+    let value = `${month}-${year}`;
+    let option = document.createElement("option");
+    option.value = value;
+    option.textContent = `${month}/${year}`;
+    if (i === 0) option.selected = true; // mês atual selecionado
+    monthSelect.appendChild(option);
+  }
+}
+
+// Alterna tema
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+  document.body.classList.toggle('light-mode');
+}
+
+// Filtra links
+function filterLinks() {
+  let input = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('#linksList li').forEach(li => {
+    li.style.display = li.textContent.toLowerCase().includes(input) ? '' : 'none';
+  });
+}
+
+// Converte texto em lista de links
+function renderLinks(rawText) {
+  ul.innerHTML = '';
+  const lines = rawText.trim().split("\n").map(l => l.trim()).filter(l => l);
+  for (let i = 0; i < lines.length; i += 2) {
+    const name = lines[i];
+    const url = lines[i+1];
+    if (!url) continue;
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.textContent = name;
+    li.appendChild(a);
+    ul.appendChild(li);
+  }
+}
+
+// Lê arquivo e salva no localStorage com chave do mês/ano
+document.getElementById('fileInput').addEventListener('change', function(event){
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const key = "links-" + monthSelect.value;
+    localStorage.setItem(key, text);
+    renderLinks(text);
+  };
+  reader.readAsText(file);
+});
+
+// Carrega os links do mês selecionado
+function loadMonth() {
+  const key = "links-" + monthSelect.value;
+  const saved = localStorage.getItem(key);
+  if (saved) {
+    renderLinks(saved);
+  } else {
+    ul.innerHTML = "<li><em>Nenhum link salvo para este mês.</em></li>";
+  }
+}
+
+// Inicialização
+window.addEventListener("load", () => {
+  generateMonths();   // cria os meses
+  loadMonth();        // só depois carrega o mês atual
+});
+</script>
+</body>
+</html>
