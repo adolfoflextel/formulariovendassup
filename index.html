@@ -3,109 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pós Atendimento - SPA</title>
+  <title>Sistema SPA</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #ffffff;
-      padding: 20px;
-      transition: background 0.3s, color 0.3s;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
     }
-    .dark-mode {
-      background-color: #333;
-      color: #f4f4f4;
-    }
-    h1 {
-      color: #333;
-    }
-    .dark-mode h1 {
-      color: #f4f4f4;
-    }
-    .menu {
-      margin: 20px 0;
-    }
-    .menu button {
-      display: block;
-      font-size: 18px;
-      margin: 10px auto;
-      padding: 12px;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-      width: 250px;
-      color: white;
-      text-align: center;
-    }
-    .menu button:nth-child(1) { background: #007bff; }
-    .menu button:nth-child(2) { background: #28a745; }
-    .menu button:nth-child(3) { background: #dc3545; }
-    .menu button:nth-child(4) { background: #ffc107; }
-    .menu button:nth-child(5) { background: #6f42c1; }
-
-    .toggle-button {
-      margin: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border: none;
-      border-radius: 5px;
+    /* Menu lateral */
+    .sidebar {
+      width: 220px;
       background: #222;
       color: white;
-    }
-    .dark-mode .toggle-button {
-      background: #f4f4f4;
-      color: #222;
-    }
-
-    #conteudo {
-      margin-top: 30px;
-      text-align: left;
-      border: 1px solid #ccc;
       padding: 20px;
-      border-radius: 8px;
-      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 {
+      margin: 0 0 20px;
+      text-align: center;
+    }
+    .sidebar a {
+      display: block;
+      padding: 10px;
+      margin: 5px 0;
+      background: #444;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background: #666;
+    }
+    /* Área de conteúdo */
+    .content {
+      flex: 1;
+      background: #f9f9f9;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .dark-mode .content {
+      background: #333;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>Bem-vindo à TORRE</h1>
-  <p>Escolha uma opção abaixo:</p>
-  <button class="toggle-button" onclick="toggleDarkMode()" id="darkModeBtn">🌙</button>
 
-  <div class="menu">
-    <button onclick="carregarPagina('FORMULÁRIO_AUTORIZACAO.html')">Registro de Atendimento</button>
-    <button onclick="carregarPagina('REGISTRO_POS.html')">Pós Atendimento</button>
-    <button onclick="carregarPagina('relacaoolt.html')">RELAÇÃO OLT</button>
-    <button onclick="carregarPagina('agenda_marco.html')">AGENDA</button>
-    <button onclick="carregarPagina('novo_menu.html')">Novo Menu</button>
+  <!-- Menu lateral -->
+  <div class="sidebar">
+    <h2>TORRE</h2>
+    <a href="#" onclick="carregarPagina('FORMULÁRIO_AUTORIZACAO.html')">Registro de Atendimento</a>
+    <a href="#" onclick="carregarPagina('REGISTRO_POS.html')">Pós Atendimento</a>
+    <a href="#" onclick="carregarPagina('relacaoolt.html')">Relação OLT</a>
+    <a href="#" onclick="carregarPagina('agenda_marco.html')">Agenda</a>
+    <a href="#" onclick="carregarPagina('novo_menu.html')">Novo Menu</a>
+    <hr>
+    <a href="#" onclick="toggleDarkMode()">🌙 Alternar Tema</a>
   </div>
 
-  <div id="conteudo">
-    <p>O conteúdo será exibido aqui.</p>
+  <!-- Área onde o conteúdo será carregado -->
+  <div class="content" id="conteudo">
+    <h1>Bem-vindo à TORRE</h1>
+    <p>Escolha uma opção no menu lateral.</p>
   </div>
 
   <script>
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
-      const isDark = document.body.classList.contains("dark-mode");
-      localStorage.setItem("darkMode", isDark);
-      document.getElementById("darkModeBtn").textContent = isDark ? "☀️" : "🌙";
-    }
-
-    if (localStorage.getItem("darkMode") === "true") {
-      document.body.classList.add("dark-mode");
-      document.getElementById("darkModeBtn").textContent = "☀️";
-    }
-
-    async function carregarPagina(url) {
+    async function carregarPagina(pagina) {
       try {
-        const resposta = await fetch(url);
-        const html = await resposta.text();
+        const response = await fetch(pagina);
+        const html = await response.text();
         document.getElementById("conteudo").innerHTML = html;
       } catch (e) {
         document.getElementById("conteudo").innerHTML = "<p>Erro ao carregar a página.</p>";
       }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    }
+
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark-mode");
     }
   </script>
 </body>
